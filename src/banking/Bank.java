@@ -11,34 +11,36 @@ public class Bank {
 	
 	private Account[] accounts = new Account[MAX_ACCOUNTS];
 	
-	private Lock bankLock;
+	//private Lock bankLock;
 	
 	public Bank() {
 		for(int i = 0; i < accounts.length; i++) {
 			accounts[i] = new Account(INITIAL_BALANCE);
 		}
-		this.bankLock = new ReentrantLock();
+		//his.bankLock = new ReentrantLock();
 	}
 	
-	public void transfer(int from, int to, int amount) {
-		this.bankLock.lock();
+	public synchronized void transfer(int from, int to, int amount) throws InterruptedException {
+		//this.bankLock.lock();
 		try {
 			if(amount > accounts[from].getBalance()) {
 				System.out.println("Insuffcient funds for transfer !!!");
+				wait();
 			} else {
 				accounts[from].withdrawal(amount);
 				accounts[to].deposit(amount);
 				String messageString = "%s transferred %d from %s to %s. Total Bank balance: %d\n";
 				String threadName = Thread.currentThread().getName();
 				System.out.printf(messageString, threadName, amount, from, to, this.getBankTotalBalance());
+				notifyAll();
 			}
 		} finally {
-			this.bankLock.unlock();
+			//this.bankLock.unlock();
 		}
 	}
 	
-	private int getBankTotalBalance() {
-		this.bankLock.lock();
+	private synchronized int getBankTotalBalance() {
+		//this.bankLock.lock();
 		try {
 			int bal = 0;
 			for(int i = 0; i < this.accounts.length; i++) {
@@ -46,7 +48,7 @@ public class Bank {
 			}
 			return bal;
 		} finally {
-			this.bankLock.unlock();
+			//this.bankLock.unlock();
 		}
 	}
 	

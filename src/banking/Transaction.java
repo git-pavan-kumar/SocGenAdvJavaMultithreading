@@ -17,9 +17,8 @@ public class Transaction implements Runnable {
 			if(toAccount == this.fromAccount) continue;
 			int amount = (int) (Math.random() * Bank.MAX_AMOUNT);
 			if(amount ==0) continue;
-			this.bank.transfer(this.fromAccount, toAccount, amount);
-			
 			try {
+				this.bank.transfer(this.fromAccount, toAccount, amount);	
 				Thread.sleep(50);
 			} catch(InterruptedException ie) {
 				ie.printStackTrace();
